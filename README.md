@@ -6,7 +6,7 @@ built on much stronger foundations.
 Start:
 
 ```
-cargo run -- --x11 &
+cargo run -- --winit &
 sleep 1 && WAYLAND_DISPLAY=wayland-1 cargo run --bin rde-panel &
 sleep 2 && WAYLAND_DISPLAY=wayland-1 cargo run --bin rde-calc
 ```
@@ -16,3 +16,4 @@ sleep 2 && WAYLAND_DISPLAY=wayland-1 cargo run --bin rde-calc
 The project as a whole is licensed under the AGPL-3.0-or-later.
 
 Parts may contain code licensed under additional compatible licenses.
+
