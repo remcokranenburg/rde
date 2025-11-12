@@ -9,7 +9,7 @@ use relm4::{
     prelude::*,
 };
 
-const WIDGET_HEIGHT: i32 = 30;
+const WIDGET_HEIGHT: i32 = 28;
 const WIDGET_SPACING: u8 = 8;
 
 #[derive(Clone, Debug, Default, Variant)]
@@ -58,7 +58,7 @@ impl SimpleComponent for App {
 
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
-                set_margin_all: 20,
+                set_margin_all: 10,
                 set_spacing: WIDGET_SPACING.into(),
 
                 gtk::Separator {
@@ -712,7 +712,6 @@ fn main() {
 
     let settings = gtk4::Settings::default().expect("No default GtkSettings");
     settings.set_gtk_primary_button_warps_slider(false);
-    // settings.set_gtk_enable_animations(false);
     settings.set_gtk_overlay_scrolling(false);
     settings.set_gtk_cursor_theme_size(16);
     settings.set_gtk_decoration_layout(Some("icon:minimize,maximize,close"));
