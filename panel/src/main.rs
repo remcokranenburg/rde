@@ -39,7 +39,7 @@ impl SimpleComponent for App {
             auto_exclusive_zone_enable: (),
             set_anchor: (Edge::Left, true),
             set_anchor: (Edge::Right, true),
-            set_anchor: (Edge::Bottom, true),
+            set_anchor: (Edge::Top, true),
 
             // Now the normal gtk stuff
             set_title: Some("RDE Panel"),
