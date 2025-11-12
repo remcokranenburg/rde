@@ -31,10 +31,10 @@ use smithay::{
     },
 };
 
-#[cfg(any(feature = "winit", feature = "x11", feature = "udev"))]
+#[cfg(any(feature = "winit", feature = "udev"))]
 use smithay::backend::input::AbsolutePositionEvent;
 
-#[cfg(any(feature = "winit", feature = "x11"))]
+#[cfg(feature = "winit")]
 use smithay::output::Output;
 use tracing::{debug, error, info};
 
@@ -439,7 +439,7 @@ impl<BackendData: Backend> AnvilState<BackendData> {
     }
 }
 
-#[cfg(any(feature = "winit", feature = "x11"))]
+#[cfg(feature = "winit")]
 impl<BackendData: Backend> AnvilState<BackendData> {
     pub fn process_input_event_windowed<B: InputBackend>(&mut self, event: InputEvent<B>, output_name: &str) {
         match event {
