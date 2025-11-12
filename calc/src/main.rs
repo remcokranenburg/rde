@@ -28,17 +28,27 @@ enum NumberBase {
     Bin,
 }
 
+#[derive(Clone, Debug, Default, Variant)]
+enum AngleUnit {
+    #[default]
+    Deg,
+    Rad,
+    Grad,
+}
+
 #[derive(Debug, Default)]
 struct App {
     view: CalculatorView,
     buffer: gtk::EntryBuffer,
     number_base: NumberBase,
+    angle_unit: AngleUnit,
 }
 
 #[derive(Debug)]
 enum Msg {
     UpdateView(CalculatorView),
     UpdateNumberBase(NumberBase),
+    UpdateAngleUnit(AngleUnit),
 }
 
 #[relm4::component]
@@ -269,12 +279,15 @@ impl SimpleComponent for App {
 
                                     gtk::CheckButton {
                                         set_label: Some("Deg"),
+                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Deg,
                                     },
                                     gtk::CheckButton {
                                         set_label: Some("Rad"),
+                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Rad,
                                     },
                                     gtk::CheckButton {
                                         set_label: Some("Grad"),
+                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Grad,
                                     },
                                 },
                             },
@@ -642,32 +655,43 @@ impl SimpleComponent for App {
             view: CalculatorView::Standard, // TODO: Remember mode
             buffer: gtk::EntryBuffer::new(Some("0.")),
             number_base: NumberBase::Dec,
+            angle_unit: AngleUnit::Deg,
         };
 
         let widgets = view_output!();
 
-        let sender_clone = sender.clone();
+        let view_action =
+            RelmAction::<ViewAction>::new_stateful_with_target_value(&CalculatorView::Standard, {
+                let sender = sender.clone();
+                move |_, state, value: CalculatorView| {
+                    *state = value.clone();
+                    sender.input(Msg::UpdateView(value.clone()));
+                }
+            });
 
-        let view_action = RelmAction::<ViewAction>::new_stateful_with_target_value(
-            &CalculatorView::Standard,
-            move |_, state, value: CalculatorView| {
-                *state = value.clone();
-                sender.input(Msg::UpdateView(value.clone()));
-            },
-        );
+        let number_base_action =
+            RelmAction::<NumberBaseAction>::new_stateful_with_target_value(&NumberBase::Dec, {
+                let sender = sender.clone();
+                move |_, state, value: NumberBase| {
+                    *state = value.clone();
+                    sender.input(Msg::UpdateNumberBase(value.clone()));
+                }
+            });
 
-        let number_base_action = RelmAction::<NumberBaseAction>::new_stateful_with_target_value(
-            &NumberBase::Dec,
-            move |_, state, value: NumberBase| {
-                *state = value.clone();
-                sender_clone.input(Msg::UpdateNumberBase(value.clone()));
-            },
-        );
+        let angle_unit_action =
+            RelmAction::<AngleUnitAction>::new_stateful_with_target_value(&AngleUnit::Deg, {
+                let sender = sender.clone();
+                move |_, state, value: AngleUnit| {
+                    *state = value.clone();
+                    sender.input(Msg::UpdateAngleUnit(value.clone()));
+                }
+            });
 
         let mut group = RelmActionGroup::<WindowActionGroup>::new();
 
         group.add_action(view_action);
         group.add_action(number_base_action);
+        group.add_action(angle_unit_action);
         group.register_for_widget(&widgets.main_window);
 
         let app = relm4::main_application();
@@ -683,6 +707,9 @@ impl SimpleComponent for App {
             }
             Msg::UpdateNumberBase(base) => {
                 self.number_base = base;
+            }
+            Msg::UpdateAngleUnit(unit) => {
+                self.angle_unit = unit;
             }
         }
     }
@@ -703,6 +730,13 @@ new_stateful_action!(
     "base",
     NumberBase,
     NumberBase
+);
+new_stateful_action!(
+    AngleUnitAction,
+    WindowActionGroup,
+    "angle-unit",
+    AngleUnit,
+    AngleUnit
 );
 
 fn main() {
