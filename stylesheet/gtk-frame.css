@@ -9,7 +9,7 @@ frame > border {
   border: 1px solid @dark_shadow;
   border-bottom: 1px solid @light_shadow;
   border-right: 1px solid @light_shadow;
-  box-shadow: 1px 1px @light_shadow inset, -1px -1px @dark_shadow inset; } 
+  box-shadow: 1px 1px @light_shadow inset, -1px -1px @dark_shadow inset; }
 
 
 /* Status bar border */

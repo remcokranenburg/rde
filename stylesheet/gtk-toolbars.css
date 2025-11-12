@@ -1,14 +1,3 @@
-/* Style GTK CSD headerbar, only if GTK-NOCSD is used,
-   otherwise uncomment the reference in gtk.css for gtk-csd.css
-   to enable GTK client side decorations. */
-
-
-/*
-headerbar {
-padding: 5px; }
-*/
-
-
 /* Main toolbars */
 toolbar {
    padding: 2px;
@@ -17,17 +6,19 @@ toolbar {
    margin-right: 0px;
    margin-bottom: 0px;
    color: @toolbar_fg_color;
-   background-color: @toolbar_bg_color; 
+   background-color: @toolbar_bg_color;
    border-top: 2px solid;
    border-bottom: 0px solid;
    border-right: 2px solid;
    border-left: 2px solid;
    border-image: url("assets/headerbox.png");
-   border-image-slice: 2 2 2 2; }
+   border-image-slice: 2 2 2 2;
+}
 
 toolbar:disabled {
    color: @theme_disabled_fg_color;
-   background-color: @theme_disabled_bg_color; }
+   background-color: @theme_disabled_bg_color;
+}
 
 .primary-toolbar {
    padding: 2px;
@@ -39,12 +30,11 @@ toolbar:disabled {
    border-bottom: 0;
    border-top: 2px solid;
    color: @toolbar_fg_color;
-   -GtkWidget-window-dragging: true;
-   color: @toolbar_fg_color;
-   background-color: @toolbar_bg_color; 
+   background-color: @toolbar_bg_color;
    border-left: 2px solid;
    border-image: url("assets/headerbox.png");
-   border-image-slice: 2 2 2 2; }
+   border-image-slice: 2 2 2 2;
+}
 
 
 /* Floating bar */
@@ -55,27 +45,34 @@ toolbar:disabled {
    border-color: @borders;
    border-radius: 0px;
    background-color: @theme_bg_color;
-   color: @theme_fg_color; }
+   color: @theme_fg_color;
+}
 
 .floating-bar.top {
    border-top-width: 0px;
    border-top-right-radius: 0px;
-   border-top-left-radius: 0px; }
+   border-top-left-radius: 0px;
+}
 
 .floating-bar.bottom {
    border-bottom-width: 0px;
    border-bottom-right-radius: 0px;
-   border-bottom-left-radius: 0px; }
+   border-bottom-left-radius: 0px;
+}
 
-.floating-bar.top.left, .floating-bar.bottom.left {
+.floating-bar.top.left,
+.floating-bar.bottom.left {
    border-left-width: 0px;
    border-bottom-left-radius: 0px;
-   border-top-left-radius: 0px; }
+   border-top-left-radius: 0px;
+}
 
-.floating-bar.top.right, .floating-bar.bottom.right {
+.floating-bar.top.right,
+.floating-bar.bottom.right {
    border-right-width: 0px;
    border-top-right-radius: 0px;
-   border-bottom-right-radius: 0px; }
+   border-bottom-right-radius: 0px;
+}
 
 
 /* Overlay bar */
@@ -85,24 +82,28 @@ toolbar:disabled {
    background-color: alpha(@dark_shadow, 0.8);
    border-radius: 0;
    padding: 3px 6px;
-   margin: 3px; }
-  
+   margin: 3px;
+}
+
 .overlay-bar label {
-   color: @tooltip_fg_color; }
+   color: @tooltip_fg_color;
+}
 
 
 /* Action bar */
 
 
 actionbar {
-padding: 2px; }
+   padding: 2px;
+}
 
 
 /* Info bar colors */
 
 
 infobar {
-  border: none; }
+   border: none;
+}
 
 .info {
    border-width: 1px;
@@ -110,7 +111,8 @@ infobar {
    border-color: shade(@info_bg_color, 0.8);
    color: @info_fg_color;
    background-image: none;
-   background-color: @info_bg_color; }
+   background-color: @info_bg_color;
+}
 
 .warning {
    border-width: 1px;
@@ -118,7 +120,8 @@ infobar {
    border-color: shade(@warning_bg_color, 0.8);
    color: @warning_fg_color;
    background-image: none;
-   background-color: @warning_bg_color; }
+   background-color: @warning_bg_color;
+}
 
 .question {
    border-width: 1px;
@@ -126,7 +129,8 @@ infobar {
    border-color: shade(@question_bg_color, 0.8);
    color: @question_fg_color;
    background-image: none;
-   background-color: @question_bg_color; }
+   background-color: @question_bg_color;
+}
 
 .error {
    border-width: 1px;
@@ -134,4 +138,5 @@ infobar {
    border-color: shade(@error_bg_color, 0.8);
    background-color: @error_bg_color;
    background-image: none;
-   color: @error_fg_color; }
+   color: @error_fg_color;
+}
