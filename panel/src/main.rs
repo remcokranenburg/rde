@@ -196,6 +196,27 @@ relm4::new_stateless_action!(ShutDownAction, WindowActionGroup, "shutdown");
 relm4::new_stateful_action!(ExampleU8Action, WindowActionGroup, "example2", u8, u8);
 
 fn main() {
+    gtk4::init().expect("Failed to initialize GTK4");
+
+    // settings
+
+    let settings = gtk4::Settings::default().expect("No default GtkSettings");
+    settings.set_gtk_primary_button_warps_slider(false);
+    // settings.set_gtk_enable_animations(false);
+    settings.set_gtk_overlay_scrolling(false);
+    settings.set_gtk_cursor_theme_size(16);
+    settings.set_gtk_decoration_layout(Some("icon:minimize,maximize,close"));
+
+    // stylesheet
+
+    let provider = gtk4::CssProvider::new();
+    provider.load_from_path("stylesheet/gtk.css");
+    gtk4::style_context_add_provider_for_display(
+        &gtk4::gdk::Display::default().expect("No display found"),
+        &provider,
+        gtk4::STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
+
     let app = RelmApp::new("com.remcokranenburg.RdePanel");
     app.run::<App>((false, 0, format_now("%H:%M")));
 }
