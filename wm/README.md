@@ -1,6 +1,6 @@
 # RDE WM
 
-Based on Anvil, a WM that behaves like Windows.
+Based on Anvil, `wm` is a window manager that behaves like Windows.
 
 ## Dependencies
 
@@ -26,16 +26,16 @@ then you'll need to install the following packages as well:
 You can run it with cargo after having cloned this repository:
 
 ```
-cargo run -- --{backend}
+cargo run -- [--dev-panel]
 ```
 
 The currently available backends are:
 
-- `--winit`: start anvil as a [Winit](https://github.com/tomaka/winit) application. This allows you to run it
-  inside of an other X11 or Wayland session.
-- `--tty-udev`: start anvil in a tty with udev support. This is the "traditional" launch of a Wayland
-  compositor. Note that this requires you to start anvil as root if your system does not have logind
-  available.
+- `winit`: start wm as a window inside a running Wayland session. This happens automatically when
+  WAYLAND_DISPLAY is set.
+
+- `udev`: start wm in a tty with udev support. This is the "traditional" launch of a Wayland
+  compositor, and will happen if WAYLAND_DISPLAY is not already set.
 
 ### Supported Environment Variables
 
