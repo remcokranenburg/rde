@@ -3,6 +3,7 @@ use std::{
     io,
     ops::Not,
     path::Path,
+    process::Command,
     sync::{Mutex, Once, atomic::Ordering},
     time::{Duration, Instant},
 };
@@ -220,7 +221,7 @@ impl Backend for UdevData {
     }
 }
 
-pub fn run_udev() {
+pub fn run_udev(dev_panel: bool) -> Result<(), anyhow::Error> {
     let mut event_loop = EventLoop::try_new().unwrap();
     let display = Display::new().unwrap();
     let mut display_handle = display.handle();
@@ -231,8 +232,7 @@ pub fn run_udev() {
     let (session, notifier) = match LibSeatSession::new() {
         Ok(ret) => ret,
         Err(err) => {
-            error!("Could not initialize a session: {}", err);
-            return;
+            return Err(err.into());
         }
     };
 
@@ -284,13 +284,7 @@ pub fn run_udev() {
     /*
      * Initialize the udev backend
      */
-    let udev_backend = match UdevBackend::new(&state.seat_name) {
-        Ok(ret) => ret,
-        Err(err) => {
-            error!(error = ?err, "Failed to initialize udev backend");
-            return;
-        }
-    };
+    let udev_backend = UdevBackend::new(&state.seat_name)?;
 
     /*
      * Initialize libinput backend
@@ -543,6 +537,10 @@ pub fn run_udev() {
     #[cfg(feature = "xwayland")]
     state.start_xwayland();
 
+    if dev_panel && let Some(socket_name) = &state.socket_name {
+        crate::run_dev_panel(socket_name)?;
+    }
+
     /*
      * And run our loop
      */
@@ -557,6 +555,8 @@ pub fn run_udev() {
             display_handle.flush_clients().unwrap();
         }
     }
+
+    Ok(())
 }
 
 impl DrmLeaseHandler for AnvilState<UdevData> {

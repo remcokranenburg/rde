@@ -19,4 +19,18 @@ pub mod udev;
 #[cfg(feature = "winit")]
 pub mod winit;
 
+use std::{
+    io,
+    process::{Child, Command},
+};
+
 pub use state::{AnvilState, ClientState};
+
+pub fn run_dev_panel(wayland_socket: &str) -> Result<Child, io::Error> {
+    Command::new("cargo")
+        .env("WAYLAND_DISPLAY", wayland_socket)
+        .arg("run")
+        .arg("--bin")
+        .arg("panel")
+        .spawn()
+}

@@ -1,4 +1,5 @@
 use std::{
+    process::Command,
     sync::{Mutex, atomic::Ordering},
     time::Duration,
 };
@@ -99,7 +100,7 @@ impl Backend for WinitData {
     fn update_led_state(&mut self, _led_state: LedState) {}
 }
 
-pub fn run_winit() {
+pub fn run_winit(dev_panel: bool) -> Result<(), anyhow::Error> {
     let mut event_loop = EventLoop::try_new().unwrap();
     let display = Display::new().unwrap();
     let mut display_handle = display.handle();
@@ -108,8 +109,7 @@ pub fn run_winit() {
     let (mut backend, mut winit) = match winit::init::<GlesRenderer>() {
         Ok(ret) => ret,
         Err(err) => {
-            error!("Failed to initialize Winit backend: {}", err);
-            return;
+            return Err(anyhow::anyhow!("Winit initialization failed: {}", err));
         }
     };
     let size = backend.window_size();
@@ -225,6 +225,10 @@ pub fn run_winit() {
 
     #[cfg(feature = "xwayland")]
     state.start_xwayland();
+
+    if dev_panel && let Some(socket_name) = &state.socket_name {
+        crate::run_dev_panel(socket_name)?;
+    }
 
     info!("Initialization completed, starting the main loop.");
 
@@ -479,4 +483,6 @@ pub fn run_winit() {
         #[cfg(feature = "debug")]
         state.backend_data.fps.tick();
     }
+
+    Ok(())
 }

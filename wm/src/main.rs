@@ -1,16 +1,11 @@
-static POSSIBLE_BACKENDS: &[&str] = &[
-    #[cfg(feature = "winit")]
-    "--winit : Run anvil as a X11 or Wayland client using winit.",
-    #[cfg(feature = "udev")]
-    "--tty-udev : Run anvil as a tty udev client (requires root if without logind).",
-];
+use std::process::Command;
 
 #[cfg(feature = "profile-with-tracy-mem")]
 #[global_allocator]
 static GLOBAL: profiling::tracy_client::ProfiledAllocator<std::alloc::System> =
     profiling::tracy_client::ProfiledAllocator::new(std::alloc::System, 10);
 
-fn main() {
+fn main() -> Result<(), anyhow::Error> {
     if let Ok(env_filter) = tracing_subscriber::EnvFilter::try_from_default_env() {
         tracing_subscriber::fmt()
             .compact()
@@ -31,31 +26,45 @@ fn main() {
     #[cfg(feature = "profile-with-puffin")]
     profiling::puffin::set_scopes_on(true);
 
-    let arg = ::std::env::args().nth(1);
-    match arg.as_ref().map(|s| &s[..]) {
-        #[cfg(feature = "winit")]
-        Some("--winit") => {
-            tracing::info!("Starting anvil with winit backend");
-            wm::winit::run_winit();
-        }
-        #[cfg(feature = "udev")]
-        Some("--tty-udev") => {
-            tracing::info!("Starting anvil on a tty using udev");
-            wm::udev::run_udev();
-        }
-        Some(other) => {
-            tracing::error!("Unknown backend: {}", other);
-        }
-        None => {
-            #[allow(clippy::disallowed_macros)]
-            {
-                println!("USAGE: rde-wm --backend");
-                println!();
-                println!("Possible backends are:");
-                for b in POSSIBLE_BACKENDS {
-                    println!("\t{}", b);
-                }
+    let env_wayland_display = ::std::env::var("WAYLAND_DISPLAY").ok();
+    tracing::info!("WAYLAND_DISPLAY: {:?}", env_wayland_display);
+
+    let mut args = std::env::args().into_iter();
+    let mut dev_panel = false;
+
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--dev-panel" => {
+                dev_panel = true;
             }
+            "--help" | "-h" => {
+                println!("Usage: wm [OPTIONS]");
+                println!();
+                println!("Options:");
+                println!("  --help, -h          Print this help message");
+                println!("  --dev-panel         Launch the development panel");
+                return Ok(());
+            }
+            _ => {}
+        }
+    }
+
+    match env_wayland_display.as_deref() {
+        Some(envvar) if !envvar.is_empty() => {
+            tracing::info!("Starting wm with winit backend because WAYLAND_DISPLAY is set");
+
+            #[cfg(not(feature = "winit"))]
+            panic!("winit backend is not enabled.");
+
+            wm::winit::run_winit(dev_panel)
+        }
+        _ => {
+            tracing::info!("Starting wm on a tty using udev because WAYLAND_DISPLAY is not set");
+
+            #[cfg(not(feature = "udev"))]
+            panic!("udev backend is not enabled.");
+
+            wm::udev::run_udev(dev_panel)
         }
     }
 }
