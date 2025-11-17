@@ -367,8 +367,6 @@ impl<BackendData: Backend> XdgShellHandler for AnvilState<BackendData> {
     }
 
     fn maximize_request(&mut self, surface: ToplevelSurface) {
-        // NOTE: This should use layer-shell when it is implemented to
-        // get the correct maximum size
         if surface
             .current_state()
             .capabilities
@@ -384,11 +382,18 @@ impl<BackendData: Backend> XdgShellHandler for AnvilState<BackendData> {
                 .expect("No outputs found");
             let geometry = self.space.output_geometry(output).unwrap();
 
+            // Get the non-exclusive zone to account for layer shell surfaces (e.g., panels)
+            let maximized_geometry = {
+                let layer_map = layer_map_for_output(output);
+                let usable_area = layer_map.non_exclusive_zone();
+                smithay::utils::Rectangle::new(geometry.loc + usable_area.loc, usable_area.size)
+            };
+
             surface.with_pending_state(|state| {
                 state.states.set(xdg_toplevel::State::Maximized);
-                state.size = Some(geometry.size);
+                state.size = Some(maximized_geometry.size);
             });
-            self.space.map_element(window, geometry.loc, true);
+            self.space.map_element(window, maximized_geometry.loc, true);
         }
 
         // The protocol demands us to always reply with a configure,
