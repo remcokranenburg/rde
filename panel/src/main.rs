@@ -48,6 +48,7 @@ impl SimpleComponent for App {
             gtk::Box {
                 set_orientation: gtk::Orientation::Horizontal,
                 set_spacing: 5,
+                add_css_class: "rde-panel-taskbar",
 
                 gtk::Box {
                     set_orientation: gtk::Orientation::Horizontal,
@@ -75,7 +76,7 @@ impl SimpleComponent for App {
                 gtk::Box {
                     set_orientation: gtk::Orientation::Horizontal,
                     set_spacing: 5,
-                    set_margin_all: 5,
+                    add_css_class: "rde-panel-notification-area",
 
                     gtk::Label {
                         #[watch]
