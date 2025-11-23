@@ -10,7 +10,7 @@ use relm4::{
 };
 
 const WIDGET_HEIGHT: i32 = 28;
-const WIDGET_SPACING: u8 = 8;
+const WIDGET_SPACING: u8 = 6;
 
 #[derive(Clone, Debug, Default, Variant)]
 enum CalculatorView {
