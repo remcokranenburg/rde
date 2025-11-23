@@ -68,368 +68,101 @@ impl SimpleComponent for App {
 
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
-                set_margin_all: 10,
-                set_spacing: WIDGET_SPACING.into(),
 
                 gtk::Separator {
                     set_orientation: gtk::Orientation::Horizontal,
                 },
 
-                gtk::Entry::with_buffer(&model.buffer) {
-                    gtk4::prelude::EntryExt::set_alignment: 1.0,
-                    set_height_request: WIDGET_HEIGHT,
-                },
+                gtk::Box {
+                    set_orientation: gtk::Orientation::Vertical,
+                    set_margin_all: 10,
+                    set_spacing: WIDGET_SPACING.into(),
 
-                gtk::Stack {
-                    set_transition_type: gtk::StackTransitionType::SlideUpDown,
-                    set_halign: gtk::Align::Center,
-                    set_valign: gtk::Align::Center,
-                    set_interpolate_size: true,
-                    set_hhomogeneous: false,
-                    set_vhomogeneous: false,
+                    gtk::Entry::with_buffer(&model.buffer) {
+                        gtk4::prelude::EntryExt::set_alignment: 1.0,
+                        set_height_request: WIDGET_HEIGHT,
+                    },
 
-                    // Standard Calculator View
-                    add_child = &gtk::Box {
-                        set_orientation: gtk::Orientation::Horizontal,
+                    gtk::Revealer {
+                        set_transition_type: gtk::RevealerTransitionType::SlideDown,
 
-                        gtk::Box {
-                            set_orientation: gtk::Orientation::Vertical,
-                            set_spacing: WIDGET_SPACING.into(),
-                            set_homogeneous: true,
+                        #[watch]
+                        set_reveal_child: matches!(model.view, CalculatorView::Scientific),
 
-                            gtk::Entry {
-                                set_editable: false,
-                                set_sensitive: false,
-                            },
-
-                            gtk::Button {
-                                set_label: "MC",
-                            },
-
-                            gtk::Button {
-                                set_label: "MR",
-                            },
-
-                            gtk::Button {
-                                set_label: "MS",
-                            },
-
-                            gtk::Button {
-                                set_label: "M+",
-                            },
-
-                        },
-
-                        gtk::Box {
-                            set_orientation: gtk::Orientation::Vertical,
-                            set_spacing: WIDGET_SPACING.into(),
-                            set_margin_start: 18,
+                        gtk::ScrolledWindow {
+                            set_propagate_natural_height: true,
+                            set_hscrollbar_policy: gtk::PolicyType::External,
+                            set_vscrollbar_policy: gtk::PolicyType::Never,
 
                             gtk::Box {
                                 set_orientation: gtk::Orientation::Horizontal,
                                 set_spacing: WIDGET_SPACING.into(),
                                 set_homogeneous: true,
-                                set_halign: gtk::Align::End,
 
-                                gtk::Button {
-                                    set_label: "Back",
+                                gtk::Frame {
                                     set_height_request: WIDGET_HEIGHT,
-                                },
-
-                                gtk::Button {
-                                    set_label: "CE",
-                                },
-
-                                gtk::Button {
-                                    set_label: "C",
-                                },
-                            },
-
-                            gtk::Grid {
-                                set_row_spacing: WIDGET_SPACING.into(),
-                                set_column_spacing: WIDGET_SPACING.into(),
-                                set_row_homogeneous: true,
-                                set_column_homogeneous: true,
-
-                                attach[0,0,1,1] = &gtk::Button {
-                                    set_label: "7",
-                                    set_height_request: WIDGET_HEIGHT,
-                                },
-
-                                attach[1,0,1,1] = &gtk::Button {
-                                    set_label: "8",
-                                },
-
-                                attach[2,0,1,1] = &gtk::Button {
-                                    set_label: "9",
-                                },
-
-                                attach[3,0,1,1] = &gtk::Button {
-                                    set_label: "/",
-                                },
-
-                                attach[4,0,1,1] = &gtk::Button {
-                                    set_label: "√",
-                                },
-
-                                attach[0,1,1,1] = &gtk::Button {
-                                    set_label: "4",
-                                },
-
-                                attach[1,1,1,1] = &gtk::Button {
-                                    set_label: "5",
-                                },
-
-                                attach[2,1,1,1] = &gtk::Button {
-                                    set_label: "6",
-                                },
-
-                                attach[3,1,1,1] = &gtk::Button {
-                                    set_label: "*",
-                                },
-
-                                attach[4,1,1,1] = &gtk::Button {
-                                    set_label: "%",
-                                },
-
-                                attach[0,2,1,1] = &gtk::Button {
-                                    set_label: "1",
-                                },
-
-                                attach[1,2,1,1] = &gtk::Button {
-                                    set_label: "2",
-                                },
-
-                                attach[2,2,1,1] = &gtk::Button {
-                                    set_label: "3",
-                                },
-
-                                attach[3,2,1,1] = &gtk::Button {
-                                    set_label: "-",
-                                },
-
-                                attach[4,2,1,1] = &gtk::Button {
-                                    set_label: "1/x",
-                                },
-
-                                attach[0,3,1,1] = &gtk::Button {
-                                    set_label: "0",
-                                },
-
-                                attach[1,3,1,1] = &gtk::Button {
-                                    set_label: "±",
-                                },
-
-                                attach[2,3,1,1] = &gtk::Button {
-                                    set_label: ".",
-                                },
-
-                                attach[3,3,1,1] = &gtk::Button {
-                                    set_label: "+",
-                                },
-
-                                attach[4,3,1,1] = &gtk::Button {
-                                    set_label: "=",
-                                },
-                            },
-                        },
-                    } -> {
-                        set_name: "standard_view",
-                    },
-
-                    add_child = &gtk::Box {
-                        set_orientation: gtk::Orientation::Vertical,
-                        set_spacing: WIDGET_SPACING.into(),
-
-                        gtk::Box {
-                            set_orientation: gtk::Orientation::Horizontal,
-                            set_spacing: WIDGET_SPACING.into(),
-                            set_homogeneous: true,
-
-                            gtk::Frame {
-                                set_height_request: WIDGET_HEIGHT,
-
-                                gtk::Box {
-                                    set_orientation: gtk::Orientation::Horizontal,
-                                    set_homogeneous: true,
-
-                                    gtk::CheckButton {
-                                        set_label: Some("Hex"),
-                                        ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Hex,
-                                    },
-                                    gtk::CheckButton {
-                                        set_label: Some("Dec"),
-                                        ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Dec,
-                                    },
-                                    gtk::CheckButton {
-                                        set_label: Some("Oct"),
-                                        ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Oct,
-                                    },
-                                    gtk::CheckButton {
-                                        set_label: Some("Bin"),
-                                        ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Bin,
-                                    },
-                                },
-                            },
-
-                            gtk::Frame {
-                                gtk::Box {
-                                    set_orientation: gtk::Orientation::Horizontal,
-                                    set_homogeneous: true,
-
-                                    gtk::CheckButton {
-                                        set_label: Some("Deg"),
-                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Deg,
-                                    },
-                                    gtk::CheckButton {
-                                        set_label: Some("Rad"),
-                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Rad,
-                                    },
-                                    gtk::CheckButton {
-                                        set_label: Some("Grad"),
-                                        ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Grad,
-                                    },
-                                },
-                            },
-                        },
-
-                        gtk::Box {
-                            set_orientation: gtk::Orientation::Horizontal,
-
-                            gtk::Box {
-                                set_orientation: gtk::Orientation::Vertical,
-                                set_spacing: WIDGET_SPACING.into(),
-
-                                gtk::Box {
-                                    set_orientation: gtk::Orientation::Horizontal,
-                                    set_spacing: WIDGET_SPACING.into(),
-
-                                    gtk::Frame {
-                                        gtk::Box {
-                                            set_orientation: gtk::Orientation::Horizontal,
-                                            set_homogeneous: true,
-
-                                            gtk::CheckButton {
-                                                set_label: Some("Inv"),
-                                            },
-                                            gtk::CheckButton {
-                                                set_label: Some("Hyp"),
-                                            },
-                                        },
-                                    },
-
-                                    gtk::Entry {
-                                        set_editable: false,
-                                        set_sensitive: false,
-                                        set_height_request: WIDGET_HEIGHT,
-                                    },
-                                },
-
-                                gtk::Box {
-                                    set_orientation: gtk::Orientation::Horizontal,
 
                                     gtk::Box {
-                                        set_orientation: gtk::Orientation::Vertical,
-                                        set_spacing: WIDGET_SPACING.into(),
+                                        set_orientation: gtk::Orientation::Horizontal,
                                         set_homogeneous: true,
 
-                                        gtk::Button {
-                                            set_label: "Sta",
+                                        gtk::CheckButton {
+                                            set_label: Some("Hex"),
+                                            ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Hex,
                                         },
-
-                                        gtk::Button {
-                                            set_label: "Ave",
+                                        gtk::CheckButton {
+                                            set_label: Some("Dec"),
+                                            ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Dec,
                                         },
-
-                                        gtk::Button {
-                                            set_label: "Sum",
+                                        gtk::CheckButton {
+                                            set_label: Some("Oct"),
+                                            ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Oct,
                                         },
-
-                                        gtk::Button {
-                                            set_label: "s",
-                                        },
-
-                                        gtk::Button {
-                                            set_label: "Dat",
+                                        gtk::CheckButton {
+                                            set_label: Some("Bin"),
+                                            ActionablePlus::set_action::<NumberBaseAction>: NumberBase::Bin,
                                         },
                                     },
+                                },
 
-                                    gtk::Grid {
-                                        set_row_spacing: WIDGET_SPACING.into(),
-                                        set_column_spacing: WIDGET_SPACING.into(),
-                                        set_row_homogeneous: true,
-                                        set_column_homogeneous: true,
-                                        set_margin_start: 18,
+                                gtk::Frame {
+                                    gtk::Box {
+                                        set_orientation: gtk::Orientation::Horizontal,
+                                        set_homogeneous: true,
 
-                                        attach[0,0,1,1] = &gtk::Button {
-                                            set_label: "F-E",
-                                            set_height_request: WIDGET_HEIGHT,
+                                        gtk::CheckButton {
+                                            set_label: Some("Deg"),
+                                            ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Deg,
                                         },
-
-                                        attach[1,0,1,1] = &gtk::Button {
-                                            set_label: "(",
+                                        gtk::CheckButton {
+                                            set_label: Some("Rad"),
+                                            ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Rad,
                                         },
-
-                                        attach[2,0,1,1] = &gtk::Button {
-                                            set_label: ")",
+                                        gtk::CheckButton {
+                                            set_label: Some("Grad"),
+                                            ActionablePlus::set_action::<AngleUnitAction>: AngleUnit::Grad,
                                         },
-
-                                        attach[0,1,1,1] = &gtk::Button {
-                                            set_label: "dms",
-                                        },
-
-                                        attach[1,1,1,1] = &gtk::Button {
-                                            set_label: "Exp",
-                                        },
-
-                                        attach[2,1,1,1] = &gtk::Button {
-                                            set_label: "ln",
-                                        },
-
-                                        attach[0,2,1,1] = &gtk::Button {
-                                            set_label: "sin",
-                                        },
-
-                                        attach[1,2,1,1] = &gtk::Button {
-                                            set_label: "x^y",
-                                        },
-
-                                        attach[2,2,1,1] = &gtk::Button {
-                                            set_label: "log",
-                                        },
-
-                                        attach[0,3,1,1] = &gtk::Button {
-                                            set_label: "cos",
-                                        },
-
-                                        attach[1,3,1,1] = &gtk::Button {
-                                            set_label: "x^3",
-                                        },
-
-                                        attach[2,3,1,1] = &gtk::Button {
-                                            set_label: "n!",
-                                        },
-
-                                        attach[0,4,1,1] = &gtk::Button {
-                                            set_label: "tan",
-                                        },
-
-                                        attach[1,4,1,1] = &gtk::Button {
-                                            set_label: "x^2",
-                                        },
-
-                                        attach[2,4,1,1] = &gtk::Button {
-                                            set_label: "1/x",
-                                        },
-
-                                    }
-                                }
+                                    },
+                                },
                             },
+                        },
+                    },
+
+                    gtk::Stack {
+                        set_transition_type: gtk::StackTransitionType::Crossfade,
+                        set_halign: gtk::Align::Center,
+                        set_valign: gtk::Align::Center,
+                        set_interpolate_size: true,
+                        set_hhomogeneous: false,
+                        set_vhomogeneous: false,
+
+                        // Standard Calculator View
+                        add_child = &gtk::Box {
+                            set_orientation: gtk::Orientation::Horizontal,
 
                             gtk::Box {
                                 set_orientation: gtk::Orientation::Vertical,
                                 set_spacing: WIDGET_SPACING.into(),
-                                set_margin_start: 18,
                                 set_homogeneous: true,
 
                                 gtk::Entry {
@@ -451,10 +184,6 @@ impl SimpleComponent for App {
 
                                 gtk::Button {
                                     set_label: "M+",
-                                },
-
-                                gtk::Button {
-                                    set_label: "PI",
                                 },
                             },
 
@@ -507,11 +236,7 @@ impl SimpleComponent for App {
                                     },
 
                                     attach[4,0,1,1] = &gtk::Button {
-                                        set_label: "Mod",
-                                    },
-
-                                    attach[5,0,1,1] = &gtk::Button {
-                                        set_label: "And",
+                                        set_label: "√",
                                     },
 
                                     attach[0,1,1,1] = &gtk::Button {
@@ -531,11 +256,7 @@ impl SimpleComponent for App {
                                     },
 
                                     attach[4,1,1,1] = &gtk::Button {
-                                        set_label: "Or",
-                                    },
-
-                                    attach[5,1,1,1] = &gtk::Button {
-                                        set_label: "Xor",
+                                        set_label: "%",
                                     },
 
                                     attach[0,2,1,1] = &gtk::Button {
@@ -555,11 +276,7 @@ impl SimpleComponent for App {
                                     },
 
                                     attach[4,2,1,1] = &gtk::Button {
-                                        set_label: "Lsh",
-                                    },
-
-                                    attach[5,2,1,1] = &gtk::Button {
-                                        set_label: "Not",
+                                        set_label: "1/x",
                                     },
 
                                     attach[0,3,1,1] = &gtk::Button {
@@ -581,47 +298,349 @@ impl SimpleComponent for App {
                                     attach[4,3,1,1] = &gtk::Button {
                                         set_label: "=",
                                     },
+                                },
+                            },
+                        } -> {
+                            set_name: "standard_view",
+                        },
 
-                                    attach[5,3,1,1] = &gtk::Button {
-                                        set_label: "Int",
+                        add_child = &gtk::Box {
+                            set_orientation: gtk::Orientation::Vertical,
+                            set_spacing: WIDGET_SPACING.into(),
+
+                            gtk::Box {
+                                set_orientation: gtk::Orientation::Horizontal,
+
+                                gtk::Box {
+                                    set_orientation: gtk::Orientation::Vertical,
+                                    set_spacing: WIDGET_SPACING.into(),
+
+                                    gtk::Box {
+                                        set_orientation: gtk::Orientation::Horizontal,
+                                        set_spacing: WIDGET_SPACING.into(),
+
+                                        gtk::Frame {
+                                            set_css_classes: &["calculator-frame-inv-hyp"],
+
+                                            gtk::Box {
+                                                set_orientation: gtk::Orientation::Horizontal,
+                                                set_homogeneous: true,
+
+                                                gtk::CheckButton {
+                                                    set_label: Some("Inv"),
+                                                    set_width_request: 64,
+                                                },
+                                                gtk::CheckButton {
+                                                    set_label: Some("Hyp"),
+                                                },
+                                            },
+                                        },
+
+                                        gtk::Entry {
+                                            set_editable: false,
+                                            set_sensitive: false,
+                                            set_height_request: WIDGET_HEIGHT,
+                                        },
                                     },
 
-                                    attach[0,4,1,1] = &gtk::Button {
-                                        set_label: "A",
+                                    gtk::Box {
+                                        set_orientation: gtk::Orientation::Horizontal,
+
+                                        gtk::Box {
+                                            set_orientation: gtk::Orientation::Vertical,
+                                            set_spacing: WIDGET_SPACING.into(),
+                                            set_homogeneous: true,
+
+                                            gtk::Button {
+                                                set_label: "Sta",
+                                            },
+
+                                            gtk::Button {
+                                                set_label: "Ave",
+                                            },
+
+                                            gtk::Button {
+                                                set_label: "Sum",
+                                            },
+
+                                            gtk::Button {
+                                                set_label: "s",
+                                            },
+
+                                            gtk::Button {
+                                                set_label: "Dat",
+                                            },
+                                        },
+
+                                        gtk::Grid {
+                                            set_row_spacing: WIDGET_SPACING.into(),
+                                            set_column_spacing: WIDGET_SPACING.into(),
+                                            set_row_homogeneous: true,
+                                            set_column_homogeneous: true,
+                                            set_margin_start: 18,
+
+                                            attach[0,0,1,1] = &gtk::Button {
+                                                set_label: "F-E",
+                                                set_height_request: WIDGET_HEIGHT,
+                                            },
+
+                                            attach[1,0,1,1] = &gtk::Button {
+                                                set_label: "(",
+                                            },
+
+                                            attach[2,0,1,1] = &gtk::Button {
+                                                set_label: ")",
+                                            },
+
+                                            attach[0,1,1,1] = &gtk::Button {
+                                                set_label: "dms",
+                                            },
+
+                                            attach[1,1,1,1] = &gtk::Button {
+                                                set_label: "Exp",
+                                            },
+
+                                            attach[2,1,1,1] = &gtk::Button {
+                                                set_label: "ln",
+                                            },
+
+                                            attach[0,2,1,1] = &gtk::Button {
+                                                set_label: "sin",
+                                            },
+
+                                            attach[1,2,1,1] = &gtk::Button {
+                                                set_label: "x^y",
+                                            },
+
+                                            attach[2,2,1,1] = &gtk::Button {
+                                                set_label: "log",
+                                            },
+
+                                            attach[0,3,1,1] = &gtk::Button {
+                                                set_label: "cos",
+                                            },
+
+                                            attach[1,3,1,1] = &gtk::Button {
+                                                set_label: "x^3",
+                                            },
+
+                                            attach[2,3,1,1] = &gtk::Button {
+                                                set_label: "n!",
+                                            },
+
+                                            attach[0,4,1,1] = &gtk::Button {
+                                                set_label: "tan",
+                                            },
+
+                                            attach[1,4,1,1] = &gtk::Button {
+                                                set_label: "x^2",
+                                            },
+
+                                            attach[2,4,1,1] = &gtk::Button {
+                                                set_label: "1/x",
+                                            },
+
+                                        }
+                                    }
+                                },
+
+                                gtk::Box {
+                                    set_orientation: gtk::Orientation::Vertical,
+                                    set_spacing: WIDGET_SPACING.into(),
+                                    set_margin_start: 18,
+                                    set_homogeneous: true,
+
+                                    gtk::Entry {
+                                        set_editable: false,
+                                        set_sensitive: false,
                                     },
 
-                                    attach[1,4,1,1] = &gtk::Button {
-                                        set_label: "B",
+                                    gtk::Button {
+                                        set_label: "MC",
                                     },
 
-                                    attach[2,4,1,1] = &gtk::Button {
-                                        set_label: "C",
+                                    gtk::Button {
+                                        set_label: "MR",
                                     },
 
-                                    attach[3,4,1,1] = &gtk::Button {
-                                        set_label: "D",
+                                    gtk::Button {
+                                        set_label: "MS",
                                     },
 
-                                    attach[4,4,1,1] = &gtk::Button {
-                                        set_label: "E",
+                                    gtk::Button {
+                                        set_label: "M+",
                                     },
 
-                                    attach[5,4,1,1] = &gtk::Button {
-                                        set_label: "F",
+                                    gtk::Button {
+                                        set_label: "PI",
+                                    },
+                                },
+
+                                gtk::Box {
+                                    set_orientation: gtk::Orientation::Vertical,
+                                    set_spacing: WIDGET_SPACING.into(),
+                                    set_margin_start: 18,
+
+                                    gtk::Box {
+                                        set_orientation: gtk::Orientation::Horizontal,
+                                        set_spacing: WIDGET_SPACING.into(),
+                                        set_homogeneous: true,
+                                        set_halign: gtk::Align::End,
+
+                                        gtk::Button {
+                                            set_label: "Back",
+                                            set_height_request: WIDGET_HEIGHT,
+                                        },
+
+                                        gtk::Button {
+                                            set_label: "CE",
+                                        },
+
+                                        gtk::Button {
+                                            set_label: "C",
+                                        },
+                                    },
+
+                                    gtk::Grid {
+                                        set_row_spacing: WIDGET_SPACING.into(),
+                                        set_column_spacing: WIDGET_SPACING.into(),
+                                        set_row_homogeneous: true,
+                                        set_column_homogeneous: true,
+
+                                        attach[0,0,1,1] = &gtk::Button {
+                                            set_label: "7",
+                                            set_height_request: WIDGET_HEIGHT,
+                                        },
+
+                                        attach[1,0,1,1] = &gtk::Button {
+                                            set_label: "8",
+                                        },
+
+                                        attach[2,0,1,1] = &gtk::Button {
+                                            set_label: "9",
+                                        },
+
+                                        attach[3,0,1,1] = &gtk::Button {
+                                            set_label: "/",
+                                        },
+
+                                        attach[4,0,1,1] = &gtk::Button {
+                                            set_label: "Mod",
+                                        },
+
+                                        attach[5,0,1,1] = &gtk::Button {
+                                            set_label: "And",
+                                        },
+
+                                        attach[0,1,1,1] = &gtk::Button {
+                                            set_label: "4",
+                                        },
+
+                                        attach[1,1,1,1] = &gtk::Button {
+                                            set_label: "5",
+                                        },
+
+                                        attach[2,1,1,1] = &gtk::Button {
+                                            set_label: "6",
+                                        },
+
+                                        attach[3,1,1,1] = &gtk::Button {
+                                            set_label: "*",
+                                        },
+
+                                        attach[4,1,1,1] = &gtk::Button {
+                                            set_label: "Or",
+                                        },
+
+                                        attach[5,1,1,1] = &gtk::Button {
+                                            set_label: "Xor",
+                                        },
+
+                                        attach[0,2,1,1] = &gtk::Button {
+                                            set_label: "1",
+                                        },
+
+                                        attach[1,2,1,1] = &gtk::Button {
+                                            set_label: "2",
+                                        },
+
+                                        attach[2,2,1,1] = &gtk::Button {
+                                            set_label: "3",
+                                        },
+
+                                        attach[3,2,1,1] = &gtk::Button {
+                                            set_label: "-",
+                                        },
+
+                                        attach[4,2,1,1] = &gtk::Button {
+                                            set_label: "Lsh",
+                                        },
+
+                                        attach[5,2,1,1] = &gtk::Button {
+                                            set_label: "Not",
+                                        },
+
+                                        attach[0,3,1,1] = &gtk::Button {
+                                            set_label: "0",
+                                        },
+
+                                        attach[1,3,1,1] = &gtk::Button {
+                                            set_label: "±",
+                                        },
+
+                                        attach[2,3,1,1] = &gtk::Button {
+                                            set_label: ".",
+                                        },
+
+                                        attach[3,3,1,1] = &gtk::Button {
+                                            set_label: "+",
+                                        },
+
+                                        attach[4,3,1,1] = &gtk::Button {
+                                            set_label: "=",
+                                        },
+
+                                        attach[5,3,1,1] = &gtk::Button {
+                                            set_label: "Int",
+                                        },
+
+                                        attach[0,4,1,1] = &gtk::Button {
+                                            set_label: "A",
+                                        },
+
+                                        attach[1,4,1,1] = &gtk::Button {
+                                            set_label: "B",
+                                        },
+
+                                        attach[2,4,1,1] = &gtk::Button {
+                                            set_label: "C",
+                                        },
+
+                                        attach[3,4,1,1] = &gtk::Button {
+                                            set_label: "D",
+                                        },
+
+                                        attach[4,4,1,1] = &gtk::Button {
+                                            set_label: "E",
+                                        },
+
+                                        attach[5,4,1,1] = &gtk::Button {
+                                            set_label: "F",
+                                        },
                                     },
                                 },
                             },
+                        } -> {
+                            set_name: "scientific_view",
                         },
-                    } -> {
-                        set_name: "scientific_view",
-                    },
 
-                    #[watch]
-                    set_visible_child_name: {
-                        match model.view {
-                            CalculatorView::Standard => "standard_view",
-                            CalculatorView::Scientific => "scientific_view",
-                        }
+                        #[watch]
+                        set_visible_child_name: {
+                            match model.view {
+                                CalculatorView::Standard => "standard_view",
+                                CalculatorView::Scientific => "scientific_view",
+                            }
+                        },
                     },
                 },
             },
