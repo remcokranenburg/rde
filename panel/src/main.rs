@@ -97,7 +97,7 @@ impl SimpleComponent for App {
 
     menu! {
         start_menu: {
-            "Firefox" => ExampleAction,
+            "Calculator" => ProgramAction,
             section!{
                 "Programs" => ExampleAction,
                 "Documents" => ExampleAction,
@@ -143,6 +143,16 @@ impl SimpleComponent for App {
                 dbg!(state);
             });
 
+        let program_action: RelmAction<ProgramAction> = RelmAction::new_stateless(move |_| {
+            println!("Launching Calculator...");
+            std::process::Command::new("cargo")
+                .arg("run")
+                .arg("--bin")
+                .arg("calc")
+                .spawn()
+                .expect("Failed to launch calc, is it installed?");
+        });
+
         let exit_action: RelmAction<ExitAction> = RelmAction::new_stateless(move |_| {
             println!("Logging off...");
             std::process::Command::new("labwc")
@@ -158,6 +168,7 @@ impl SimpleComponent for App {
         let mut group = RelmActionGroup::<WindowActionGroup>::new();
         group.add_action(action);
         group.add_action(action2);
+        group.add_action(program_action);
         group.add_action(exit_action);
         group.add_action(shutdown_action);
         group.register_for_widget(&widgets.taskbar_window);
@@ -192,6 +203,7 @@ impl SimpleComponent for App {
 
 relm4::new_action_group!(WindowActionGroup, "win");
 relm4::new_stateless_action!(ExampleAction, WindowActionGroup, "example");
+relm4::new_stateless_action!(ProgramAction, WindowActionGroup, "program");
 relm4::new_stateless_action!(ExitAction, WindowActionGroup, "exit");
 relm4::new_stateless_action!(ShutDownAction, WindowActionGroup, "shutdown");
 relm4::new_stateful_action!(ExampleU8Action, WindowActionGroup, "example2", u8, u8);
