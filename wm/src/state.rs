@@ -1,5 +1,9 @@
 use std::{
-    collections::HashMap, os::unix::io::OwnedFd, process::Child, sync::{Arc, atomic::AtomicBool}, time::Duration
+    collections::HashMap,
+    os::unix::io::OwnedFd,
+    process::Child,
+    sync::{Arc, atomic::AtomicBool},
+    time::Duration,
 };
 
 use tracing::{info, warn};
@@ -889,7 +893,7 @@ impl<BackendData: Backend + 'static> AnvilState<BackendData> {
         render_element_states: &RenderElementStates,
     ) {
         let time = time.into();
-        let throttle = Some(Duration::from_secs(1));
+        let throttle = Some(Duration::from_millis(11)); // ~90 FPS
 
         #[allow(clippy::mutable_key_type)]
         let mut clients: HashMap<ClientId, Client> = HashMap::new();
